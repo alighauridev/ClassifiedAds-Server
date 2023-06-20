@@ -1,7 +1,6 @@
 import * as dotenv from "dotenv";
 dotenv.config();
 import express from "express";
-import morgan from "morgan";
 import mongoose from "mongoose";
 import helmet from "helmet";
 import errorHandler from "./middleware/globalErrorHandler.js";
@@ -52,7 +51,6 @@ helmet({
 //middleware
 app.use(corsAll);
 app.use(helmet());
-app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 //compress responses that allowed by shouldCompress function
