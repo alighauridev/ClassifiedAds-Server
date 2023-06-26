@@ -22,6 +22,7 @@ import ads from "./routes/ads.routes.js";
 
 import myinfo from "./routes/user.routes.js";
 import uploadRouter from "./routes/upload.routes.js";
+import plansRouter from "./routes/plansRoutes.routes.js";
 import categoryRouter from "./routes/category.routes.js";
 
 // import userRouter from './routes/user.routes.js';
@@ -82,7 +83,9 @@ app.use("/ads", ads);
 //404 when invalid route is given
 app.use("/info", myinfo);
 app.use("/upload", uploadRouter);
+app.use("/upload", uploadRouter);
 app.use("/category", categoryRouter);
+app.use("/plans", plansRouter);
 app.use((req, res, next) => {
   next(new NOTFOUND("Resource not found"));
 });
