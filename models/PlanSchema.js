@@ -1,9 +1,10 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const planSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
+        enum: ["Bronze", "Silver", "Old"],
     },
     totalAds: {
         type: Number,
@@ -21,14 +22,12 @@ const planSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
-    // featuredAds: {
-    //     type: Boolean,
-    //     required: true,
-    // },
-
-    // Add other necessary attributes here
+    adsLimit: {
+        type: Number,
+        required: true,
+    },
 });
 
-const Plan = mongoose.model('Plan', planSchema);
+const Plan = mongoose.model("Plan", planSchema);
 
 export default Plan;

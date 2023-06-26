@@ -1,6 +1,7 @@
 import Ad from "../models/sellAdSchema.js";
 import notFound from "../errors/notFound.js";
 import { paginationAndFilter } from "../utils/reuseable.js";
+import User from "../models/user.js";
 //fetch all ads
 const ads = async (req, res, next) => {
   try {
@@ -13,9 +14,11 @@ const ads = async (req, res, next) => {
       status: { $eq: "accepted" },
     })
       .select("-__v")
+      .sort({ priority: -1 }) // Sort by priority, with high priority ads appearing first
       .skip(fp.pagination.limit * (fp.pagination.page - 1))
       .limit(fp.pagination.limit)
       .populate("author", "-__v");
+
     let count = await Ad.countDocuments({
       status: { $eq: "accepted" },
     });
@@ -25,6 +28,7 @@ const ads = async (req, res, next) => {
     next(err);
   }
 };
+
 //fetch ad by id
 const ad = async (req, res, next) => {
   try {
@@ -43,23 +47,47 @@ const ad = async (req, res, next) => {
 //create ad
 const createAd = async (req, res, next) => {
   try {
-    let author = req.user._id;
+    const author = req.user._id;
 
-    let {
+    // Check if the user has a subscribed plan
+    const user = await User.findById(author).populate("plan");
+    if (!user.plan) {
+      return res
+        .status(400)
+        .json({ message: "User does not have a subscribed plan" });
+    }
+
+    // Check if the user has reached the ads limit
+    if (user.adsCreated >= user.plan.adsLimit) {
+      return res
+        .status(400)
+        .json({ message: "You have reached your ads limit" });
+    }
+    let priority = "normal"; // Default priority
+
+    // Assign priority based on the subscribed plan
+    if (user.plan.name === "Bronze") {
+      priority = "low";
+    } else if (user.plan.name === "Silver") {
+      priority = "medium";
+    } else if (user.plan.name === "Gold") {
+      priority = "high";
+    }
+    // Create the ad
+    const {
       title,
       description,
       price,
       category,
       subCategory,
-      worker,
+      images,
       transaction,
       telephone,
       Location,
       status,
-      images,
       League,
     } = req.body;
-    let ad = await Ad.create({
+    const ad = await Ad.create({
       title,
       description,
       author,
@@ -67,13 +95,18 @@ const createAd = async (req, res, next) => {
       category,
       subCategory,
       images,
-
       transaction,
       telephone,
       Location,
       status,
       League,
+      priority, // Set priority based on plan
     });
+
+    // Increment the adsCreated count for the user
+    user.adsCreated++;
+    await user.save();
+
     return res.status(201).json({ status: "OK", ad });
   } catch (err) {
     next(err);
