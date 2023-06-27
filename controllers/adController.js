@@ -2,10 +2,13 @@ import Ad from "../models/sellAdSchema.js";
 import notFound from "../errors/notFound.js";
 import { paginationAndFilter } from "../utils/reuseable.js";
 import User from "../models/user.js";
+import { convertCurrency } from "../utils/currenyConverter.js";
 //fetch all ads
 const ads = async (req, res, next) => {
   try {
-    let { limit, page, filter = {} } = req.body;
+    const { limit, page, filter = {} } = req.body;
+    const { targetCurrency } = req.query;
+    // const baseCurrency = req.user.currency;
 
     let fp = paginationAndFilter(page, limit, filter);
 
@@ -14,10 +17,21 @@ const ads = async (req, res, next) => {
       status: { $eq: "accepted" },
     })
       .select("-__v")
-      .sort({ priority: -1 }) // Sort by priority, with high priority ads appearing first
+      .sort({ priority: -1 })
       .skip(fp.pagination.limit * (fp.pagination.page - 1))
       .limit(fp.pagination.limit)
       .populate("author", "-__v");
+
+    // Convert prices to target currency
+    for (let ad of ads) {
+      const convertedPrice = await convertCurrency(
+        ad.price,
+        "USD",
+        "USD"
+      );
+      ad.price = convertedPrice;
+      ad.currency = targetCurrency;
+    }
 
     let count = await Ad.countDocuments({
       status: { $eq: "accepted" },
@@ -28,6 +42,7 @@ const ads = async (req, res, next) => {
     next(err);
   }
 };
+
 
 //fetch ad by id
 const ad = async (req, res, next) => {
@@ -44,7 +59,6 @@ const ad = async (req, res, next) => {
   }
 };
 
-//create ad
 const createAd = async (req, res, next) => {
   try {
     const author = req.user._id;
@@ -52,13 +66,13 @@ const createAd = async (req, res, next) => {
     // Check if the user has a subscribed plan
     const user = await User.findById(author).populate("plan");
 
-
     // Check if the user has reached the ads limit
-    if (user.adsCreated >= user.plan.adsLimit) {
+    if (user.adsCreated >= user.plan.totalAds) {
       return res
         .status(400)
         .json({ message: "You have reached your ads limit" });
     }
+
     let priority = "normal"; // Default priority
 
     // Assign priority based on the subscribed plan
@@ -69,6 +83,7 @@ const createAd = async (req, res, next) => {
     } else if (user.plan.name === "Gold") {
       priority = "high";
     }
+
     // Create the ad
     const {
       title,
@@ -81,8 +96,8 @@ const createAd = async (req, res, next) => {
       telephone,
       Location,
       status,
-      League,
     } = req.body;
+
     const ad = await Ad.create({
       title,
       description,
@@ -95,7 +110,6 @@ const createAd = async (req, res, next) => {
       telephone,
       Location,
       status,
-      League,
       priority, // Set priority based on plan
     });
 

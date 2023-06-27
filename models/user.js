@@ -36,6 +36,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       // required: true,
     },
+    currency: {
+      type: String,
+      default: "USD"
+    },
     authType: {
       type: String,
       required: true,
@@ -61,8 +65,9 @@ const userSchema = new mongoose.Schema(
       maxlength: 500,
     },
     plan: {
-      type: String,
-      default: "Basic",
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Plan",
+      default: "649abd9c57cf77e0c2a76a1d",
     },
     adsCreated: {
       type: Number,

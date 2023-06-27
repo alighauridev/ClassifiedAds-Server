@@ -63,6 +63,9 @@ const selladSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    priority: {
+      type: String,
+    },
     boost: {
       type: Boolean,
       default: false,
@@ -71,7 +74,11 @@ const selladSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    League: {
+    currency: {
+      type: String,
+      default: "USD"
+    },
+    plan: {
       type: String,
       enum: ["Bronze", "Silver", "Gold", "Platinum", "Diamond"],
     },

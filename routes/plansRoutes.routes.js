@@ -5,6 +5,7 @@ import {
     getPlanById,
     updatePlan,
     deletePlan,
+    buyPlan,
 } from '../controllers/planControllers.js';
 import cors from "cors";
 
@@ -25,5 +26,6 @@ router.put('/:id', updatePlan);
 
 // Delete a plan
 router.delete('/:id', deletePlan);
-
+// User routes
+router.put('/users/:userId/buy-plan/:planId', buyPlan);
 export default router;

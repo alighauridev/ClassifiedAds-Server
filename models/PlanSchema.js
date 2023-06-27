@@ -4,7 +4,7 @@ const planSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
-        enum: ["Bronze", "Silver", "Gold"],
+        enum: ["Basic", "Bronze", "Silver", "Gold"],
     },
     totalAds: {
         type: Number,
@@ -18,8 +18,6 @@ const planSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-
-
 });
 
 const Plan = mongoose.model("Plan", planSchema);
