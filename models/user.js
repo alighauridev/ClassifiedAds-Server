@@ -60,6 +60,14 @@ const userSchema = new mongoose.Schema(
       minlength: 3,
       maxlength: 500,
     },
+    plan: {
+      type: String,
+      default: "Basic",
+    },
+    adsCreated: {
+      type: Number,
+      default: 0,
+    },
     gender: {
       type: String,
       enum: ["male", "female", "other"],

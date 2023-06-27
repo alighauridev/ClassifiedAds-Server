@@ -51,11 +51,7 @@ const createAd = async (req, res, next) => {
 
     // Check if the user has a subscribed plan
     const user = await User.findById(author).populate("plan");
-    if (!user.plan) {
-      return res
-        .status(400)
-        .json({ message: "User does not have a subscribed plan" });
-    }
+
 
     // Check if the user has reached the ads limit
     if (user.adsCreated >= user.plan.adsLimit) {
