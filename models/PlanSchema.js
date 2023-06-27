@@ -4,7 +4,7 @@ const planSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
-        enum: ["Bronze", "Silver", "Old"],
+        enum: ["Bronze", "Silver", "Gold"],
     },
     totalAds: {
         type: Number,
@@ -18,14 +18,8 @@ const planSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    validity: {
-        type: Number,
-        required: true,
-    },
-    adsLimit: {
-        type: Number,
-        required: true,
-    },
+
+
 });
 
 const Plan = mongoose.model("Plan", planSchema);

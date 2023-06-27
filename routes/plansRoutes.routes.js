@@ -6,22 +6,24 @@ import {
     updatePlan,
     deletePlan,
 } from '../controllers/planControllers.js';
+import cors from "cors";
 
 const router = express.Router();
+router.use(cors({ origin: "*" }));
 
 // Create a new plan
-router.post('/plans', createPlan);
+router.post('/', createPlan);
 
 // Get all plans
-router.post('/plans', getAllPlans);
+router.get('/', getAllPlans);
 
 // Get a single plan by ID
-router.get('/plans/:id', getPlanById);
+router.get('/:id', getPlanById);
 
 // Update a plan
-router.put('/plans/:id', updatePlan);
+router.put('/:id', updatePlan);
 
 // Delete a plan
-router.delete('/plans/:id', deletePlan);
+router.delete('/:id', deletePlan);
 
 export default router;
