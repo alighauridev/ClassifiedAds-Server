@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const convertCurrency = async (amount, baseCurrency, targetCurrency) => {
-    const apiKey = '123b19bed6f4438f9cd292724f4ce445'; // Replace with your API key
+    const apiKey = 'b3922bbd5b844e49907007e308edab9a'; // Replace with your API key
     const apiUrl = `https://openexchangerates.org/api/latest.json?app_id=${apiKey}`;
 
     try {
@@ -13,7 +13,8 @@ const convertCurrency = async (amount, baseCurrency, targetCurrency) => {
 
         return convertedAmount;
     } catch (error) {
-        throw new Error('Currency conversion failed');
+        console.log('Currency conversion failed:', error);
+        return null; // Return a default value or handle the error appropriately
     }
 };
 

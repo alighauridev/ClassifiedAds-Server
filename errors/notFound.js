@@ -4,14 +4,14 @@ import CustomError from './customError.js'
 
 class NOTFOUND extends CustomError {
 
-    constructor (
-        name, 
+    constructor(
+        name,
         statusCode = httpStatusCodes.NOT_FOUND,
         description = "Not Found",
         isOperational = true
-        ){
-            super(name,statusCode, isOperational, description)
-        }
+    ) {
+        super(name, statusCode, isOperational, description)
+    }
 
 }
 

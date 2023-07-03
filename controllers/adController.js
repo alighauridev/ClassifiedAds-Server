@@ -6,8 +6,8 @@ import { convertCurrency } from "../utils/currenyConverter.js";
 //fetch all ads
 const ads = async (req, res, next) => {
   try {
-    const { limit, page, filter = {} } = req.body;
-    const { targetCurrency } = req.query;
+    const { limit, page, filter = {}, currency } = req.body;
+
     // const baseCurrency = req.user.currency;
 
     let fp = paginationAndFilter(page, limit, filter);
@@ -27,18 +27,18 @@ const ads = async (req, res, next) => {
       const convertedPrice = await convertCurrency(
         ad.price,
         "USD",
-        "USD"
+        currency
       );
       ad.price = convertedPrice;
-      ad.currency = targetCurrency;
+      ad.currency = currency;
     }
 
     let count = await Ad.countDocuments({
-      status: { $eq: "accepted" },
     });
 
-    return res.status(200).json({ status: "OK", data: ads, count: count });
+    return res.status(200).json({ status: "OK", data: ads, count: count, currency });
   } catch (err) {
+    console.log(err);
     next(err);
   }
 };

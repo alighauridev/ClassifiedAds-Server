@@ -95,5 +95,5 @@ app.use(errorHandler);
 
 //listener
 app.listen(PORT, () => {
-  development && console.log("successfully connected to the Server");
+  development && console.log(`successfully connected to the Server ${PORT}`);
 });
