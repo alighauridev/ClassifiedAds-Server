@@ -61,7 +61,7 @@ const ad = async (req, res, next) => {
 
 const createAd = async (req, res, next) => {
   try {
-    const author = req.user._id;
+    const author = req.author;
 
     // Check if the user has a subscribed plan
     const user = await User.findById(author).populate("plan");
@@ -92,9 +92,13 @@ const createAd = async (req, res, next) => {
       category,
       subCategory,
       images,
-      transaction,
+      bulkPrice,
+      brand,
+      type,
+      warranty,
+      name,
       telephone,
-      Location,
+      condition,
       status,
     } = req.body;
 
@@ -103,14 +107,18 @@ const createAd = async (req, res, next) => {
       description,
       author,
       price,
+      bulkPrice,
       category,
       subCategory,
       images,
-      transaction,
+      type,
+      name,
       telephone,
-      Location,
+      brand,
+      condition,
+      warranty,
       status,
-      priority, // Set priority based on plan
+
     });
 
     // Increment the adsCreated count for the user

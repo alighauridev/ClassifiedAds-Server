@@ -11,6 +11,7 @@ import dotenv from "dotenv";
 import User from "../models/user.js";
 // import passport from "passport";
 import GoogleStrategyPassport from "passport-google-oauth2";
+import NOTFOUND from "../errors/notFound.js";
 const GoogleStrategy = GoogleStrategyPassport.Strategy;
 dotenv.config();
 
@@ -147,9 +148,9 @@ passport.serializeUser((user, cb) => {
   cb(null, user._id);
 });
 passport.deserializeUser((id, cb) => {
-  User.findById(id).then((user)=>{
+  User.findById(id).then((user) => {
     cb(null, user);
-  }).catch(err=>{ return cb(err)})
+  }).catch(err => { return cb(err) })
 });
 
 export default {

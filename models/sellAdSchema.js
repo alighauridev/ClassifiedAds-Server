@@ -19,10 +19,39 @@ const selladSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    name: {
+      type: String,
+      required: true,
+    },
     price: {
       type: Number,
       required: true,
       min: 0,
+    },
+    bulkPrice: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+    brand: {
+      type: String,
+      required: true,
+
+    },
+    type: {
+      type: String,
+      required: true,
+
+    },
+    condition: {
+      type: String,
+      required: true,
+
+    },
+    warranty: {
+      type: String,
+      required: true,
+
     },
     category: {
       type: [String],
@@ -33,12 +62,11 @@ const selladSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    // multiple images
+
     images: {
       type: [String],
       required: true,
     },
-    // Todo: discuss with team
 
     isDeleted: {
       type: Boolean,
@@ -47,12 +75,11 @@ const selladSchema = new mongoose.Schema(
     transaction: {
       type: String,
       enum: ["buy", "sell"],
-      required: true,
+
     },
     telephone: {
-      type: [String],
+      type: Number,
       required: true,
-      validate: (value) => Array.isArray(value) && value.length > 0,
     },
     status: {
       type: String,
@@ -66,14 +93,8 @@ const selladSchema = new mongoose.Schema(
     priority: {
       type: String,
     },
-    boost: {
-      type: Boolean,
-      default: false,
-    },
-    Location: {
-      type: String,
-      required: true,
-    },
+
+
     currency: {
       type: String,
       default: "USD"

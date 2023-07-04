@@ -21,7 +21,7 @@ router.post("/getAll", Controller.ads);
 router.post("/getAllAdmin", auth.verifyUser, Controller.adsAdmin);
 router.post(
   "/createAd",
-  auth.verifyUser,
+  // auth.verifyUser,
 
   Controller.createAd
 );
