@@ -35,12 +35,9 @@ router.post(
 );
 
 // Google Routes
-router.get(
-  "/google",
-  passport.authenticate("google", {
-    session: false,
-    scope: ["email", "profile"],
-  })
+router.post(
+  "/google-signin",
+  Controller.GoogleSignIn
 );
 router.get(
   "/google/callback",

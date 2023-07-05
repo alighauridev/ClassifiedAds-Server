@@ -7,7 +7,9 @@ import UnAuthorized from "../errors/unAuthorized.js";
 import notFound from "../errors/notFound.js";
 import ValidationError from "../errors/validationError.js";
 
+import { OAuth2Client } from "google-auth-library"; // Import the OAuth2Client
 
+const client = new OAuth2Client("430388340650-cm3fqfnbpgfpnbgagudqmbjqmp7slm1d.apps.googleusercontent.com");
 //Local SignUp Function=================================================================
 const SignUp = async (req, res, next) => {
   try {
@@ -18,7 +20,7 @@ const SignUp = async (req, res, next) => {
       password: hashedPass,
       authType: "Local",
     })
-    let createdUser = await user.save({runValidators:true,new:true});
+    let createdUser = await user.save({ runValidators: true, new: true });
     if (!createdUser) {
       let err = new BadRequest("Check your request and try again");
       return next(err);
@@ -36,12 +38,12 @@ const SignUp = async (req, res, next) => {
       refreshToken = exsisting.refreshToken;
     }
 
-      //delete user.password to not send password to client in response
-      let responseUser = {...createdUser._doc}
-      delete responseUser.password;
-      delete responseUser.isDeleted;
-      delete responseUser.emailVerified;
-      delete responseUser.__v;
+    //delete user.password to not send password to client in response
+    let responseUser = { ...createdUser._doc }
+    delete responseUser.password;
+    delete responseUser.isDeleted;
+    delete responseUser.emailVerified;
+    delete responseUser.__v;
 
     return res
       .status(201)
@@ -51,6 +53,60 @@ const SignUp = async (req, res, next) => {
     next(err);
   }
 };
+const GoogleSignIn = async (req, res, next) => {
+  const { idToken } = req.body;
+  try {
+    const ticket = await client.verifyIdToken({
+      idToken,
+      audience: "430388340650-cm3fqfnbpgfpnbgagudqmbjqmp7slm1d.apps.googleusercontent.com",
+    });
+    const { name, email, picture } = ticket.getPayload();
+
+    let user = await User.findOne({ email: email }).select("-__v");
+
+    if (!user) {
+      // Create a new user if the user doesn't exist
+      user = new User({
+        name: name,
+        email: email,
+        avatar: picture,
+        authType: "google",
+      });
+      await user.save();
+    }
+
+    let accessToken = auth.accessTokenGenerator(user);
+    let refreshToken;
+    let existing = await REFRESHTOKEN.findOne(
+      { userId: user._id },
+      { refreshToken: 1, _id: 0 }
+    );
+    if (!existing) {
+      refreshToken = auth.refreshTokenGenerator(user);
+      REFRESHTOKEN.create({ userId: user._id, refreshToken });
+    } else {
+      refreshToken = existing.refreshToken;
+    }
+
+    // Delete user.password to not send the password to the client in the response
+    let userObj = { ...user._doc };
+    delete userObj.password;
+    delete userObj.isDeleted;
+    delete userObj.emailVerified;
+
+    res.status(200).setHeader("Content-Type", "application/json").json({
+      status: "OK",
+      accessToken,
+      refreshToken,
+      user: userObj,
+    });
+  } catch (err) {
+    console.error(err);
+    let error = new UnAuthorized("Invalid Google Sign-In");
+    return next(error);
+  }
+};
+
 
 //Local Login Function====================================================================================
 const Login = async (req, res, next) => {
@@ -64,7 +120,7 @@ const Login = async (req, res, next) => {
   if (!verified) {
     let err = new ValidationError("Email or Password is incorrect");
     return next(err);
-    
+
   }
   let accessToken = auth.accessTokenGenerator(user);
   let refreshToken;
@@ -79,9 +135,9 @@ const Login = async (req, res, next) => {
     refreshToken = exsisting.refreshToken;
   }
 
-  
+
   //delete user.password to not send password to client in response
-  let userObj = {...user._doc}
+  let userObj = { ...user._doc }
   delete userObj.password;
   delete userObj.isDeleted;
   delete userObj.emailVerified;
@@ -130,4 +186,5 @@ export default {
   SignUp,
   Login,
   RefreshAccessToken,
+  GoogleSignIn
 };
