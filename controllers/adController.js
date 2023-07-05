@@ -24,25 +24,21 @@ const ads = async (req, res, next) => {
 
     // Convert prices to target currency
     for (let ad of ads) {
-      const convertedPrice = await convertCurrency(
-        ad.price,
-        "USD",
-        currency
-      );
+      const convertedPrice = await convertCurrency(ad.price, "USD", currency);
       ad.price = convertedPrice;
       ad.currency = currency;
     }
 
-    let count = await Ad.countDocuments({
-    });
+    let count = await Ad.countDocuments({});
 
-    return res.status(200).json({ status: "OK", data: ads, count: count, currency });
+    return res
+      .status(200)
+      .json({ status: "OK", data: ads, count: count, currency });
   } catch (err) {
     console.log(err);
     next(err);
   }
 };
-
 
 //fetch ad by id
 const ad = async (req, res, next) => {
@@ -61,45 +57,46 @@ const ad = async (req, res, next) => {
 
 const createAd = async (req, res, next) => {
   try {
-    const author = req.author;
+    // const author = req.author;
 
     // Check if the user has a subscribed plan
-    const user = await User.findById(author).populate("plan");
+    const user = await User.findById(req.body.user).populate("plan");
 
-    // Check if the user has reached the ads limit
-    if (user.adsCreated >= user.plan.totalAds) {
-      return res
-        .status(400)
-        .json({ message: "You have reached your ads limit" });
-    }
+    if (user) {
+      // Check if the user has reached the ads limit
+      console.log(user);
+      if (user?.adsCreated >= user?.plan?.totalAds) {
+        return res
+          .status(400)
+          .json({ message: "You have reached your ads limit" });
+      }
+      let priority = "normal"; // Default priority
 
-    let priority = "normal"; // Default priority
-
-    // Assign priority based on the subscribed plan
-    if (user.plan.name === "Bronze") {
-      priority = "low";
-    } else if (user.plan.name === "Silver") {
-      priority = "medium";
-    } else if (user.plan.name === "Gold") {
-      priority = "high";
+      // Assign priority based on the subscribed plan
+      if (user.plan.name === "Bronze") {
+        priority = "low";
+      } else if (user.plan.name === "Silver") {
+        priority = "medium";
+      } else if (user.plan.name === "Gold") {
+        priority = "high";
+      }
     }
 
     // Create the ad
     const {
       title,
       description,
+      author,
       price,
+
       category,
       subCategory,
       images,
-      bulkPrice,
-      brand,
       type,
-      warranty,
       name,
       telephone,
-      condition,
-      status,
+      vehicle,
+      property,
     } = req.body;
 
     const ad = await Ad.create({
@@ -107,23 +104,22 @@ const createAd = async (req, res, next) => {
       description,
       author,
       price,
-      bulkPrice,
+
       category,
       subCategory,
       images,
       type,
       name,
       telephone,
-      brand,
-      condition,
-      warranty,
-      status,
-
+      vehicle,
+      property,
     });
 
-    // Increment the adsCreated count for the user
-    user.adsCreated++;
-    await user.save();
+    if (user) {
+      // Increment the adsCreated count for the user
+      user.adsCreated++;
+      await user.save();
+    }
 
     return res.status(201).json({ status: "OK", ad });
   } catch (err) {

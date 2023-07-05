@@ -84,7 +84,7 @@ app.use("/ads", ads);
 app.use("/info", myinfo);
 app.use("/upload", uploadRouter);
 app.use("/upload", uploadRouter);
-app.use("/category", categoryRouter);
+app.use("/api/v1", categoryRouter);
 app.use("/plans", plansRouter);
 app.use((req, res, next) => {
   next(new NOTFOUND("Resource not found"));

@@ -36,22 +36,18 @@ const selladSchema = new mongoose.Schema(
     brand: {
       type: String,
       required: true,
-
     },
     type: {
       type: String,
       required: true,
-
     },
     condition: {
       type: String,
       required: true,
-
     },
     warranty: {
       type: String,
       required: true,
-
     },
     category: {
       type: [String],
@@ -75,7 +71,6 @@ const selladSchema = new mongoose.Schema(
     transaction: {
       type: String,
       enum: ["buy", "sell"],
-
     },
     telephone: {
       type: Number,
@@ -94,10 +89,9 @@ const selladSchema = new mongoose.Schema(
       type: String,
     },
 
-
     currency: {
       type: String,
-      default: "USD"
+      default: "USD",
     },
     plan: {
       type: String,

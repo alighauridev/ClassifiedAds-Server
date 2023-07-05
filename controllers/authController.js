@@ -60,7 +60,7 @@ const GoogleSignIn = async (req, res, next) => {
       idToken,
       audience: "430388340650-cm3fqfnbpgfpnbgagudqmbjqmp7slm1d.apps.googleusercontent.com",
     });
-    const { name, email, picture } = ticket.getPayload();
+    const { name, email } = ticket.getPayload();
 
     let user = await User.findOne({ email: email }).select("-__v");
 
@@ -69,7 +69,6 @@ const GoogleSignIn = async (req, res, next) => {
       user = new User({
         name: name,
         email: email,
-        avatar: picture,
         authType: "google",
       });
       await user.save();
