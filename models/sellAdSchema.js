@@ -17,6 +17,7 @@ const selladSchema = new mongoose.Schema(
     author: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
+      // required: true,
     },
     name: {
       type: String,
@@ -41,6 +42,9 @@ const selladSchema = new mongoose.Schema(
       warranty: {
         type: String,
       },
+      bulkPrice: {
+        type: Number,
+      },
     },
     category: {
       type: [String],
@@ -51,7 +55,6 @@ const selladSchema = new mongoose.Schema(
 
     images: {
       type: [String],
-      required: true,
     },
 
     isDeleted: {
@@ -64,7 +67,6 @@ const selladSchema = new mongoose.Schema(
     },
     telephone: {
       type: Number,
-      required: true,
     },
     status: {
       type: String,

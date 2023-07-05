@@ -94,7 +94,8 @@ const createAd = async (req, res, next) => {
       name,
       telephone,
       condition,
-      warranty
+      warranty,
+      bulkPrice
     } = req.body;
 
     const ad = await Ad.create({
@@ -110,7 +111,8 @@ const createAd = async (req, res, next) => {
         brand,
         type,
         condition,
-        warranty
+        warranty,
+        bulkPrice
       },
     });
 
