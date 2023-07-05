@@ -5,7 +5,6 @@ import Category from "../models/Category.js";
 const getCategories = async (req, res) => {
   try {
     const categories = await Category.find({
-      parentCategory: null,
     }).populate("subcategories");
     res.send(categories);
   } catch (error) {
