@@ -17,7 +17,6 @@ const selladSchema = new mongoose.Schema(
     author: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
     },
     name: {
       type: String,
@@ -28,36 +27,27 @@ const selladSchema = new mongoose.Schema(
       required: true,
       min: 0,
     },
-    bulkPrice: {
-      type: Number,
-      required: true,
-      min: 0,
-    },
-    brand: {
-      type: String,
-      required: true,
-    },
-    type: {
-      type: String,
-      required: true,
-    },
-    condition: {
-      type: String,
-      required: true,
-    },
-    warranty: {
-      type: String,
-      required: true,
+
+    vehicle: {
+      brand: {
+        type: String,
+      },
+      type: {
+        type: String,
+      },
+      condition: {
+        type: String,
+      },
+      warranty: {
+        type: String,
+      },
     },
     category: {
       type: [String],
       required: true,
       validate: (value) => Array.isArray(value) && value.length > 0,
     },
-    subCategory: {
-      type: String,
-      required: true,
-    },
+
 
     images: {
       type: [String],

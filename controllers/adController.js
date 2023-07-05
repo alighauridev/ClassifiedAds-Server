@@ -86,33 +86,32 @@ const createAd = async (req, res, next) => {
     const {
       title,
       description,
-      author,
       price,
-
+      brand,
       category,
-      subCategory,
       images,
       type,
       name,
       telephone,
-      vehicle,
-      property,
+      condition,
+      warranty
     } = req.body;
 
     const ad = await Ad.create({
       title,
       description,
-      author,
       price,
 
       category,
-      subCategory,
       images,
-      type,
       name,
       telephone,
-      vehicle,
-      property,
+      vehicle: {
+        brand,
+        type,
+        condition,
+        warranty
+      },
     });
 
     if (user) {
