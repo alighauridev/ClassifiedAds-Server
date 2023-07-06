@@ -18,7 +18,7 @@ router.use(cors({ origin: "*" }));
 
 //local auth login
 router.post("/getAll", Controller.ads);
-router.post("/getAllAdmin", auth.verifyUser, Controller.adsAdmin);
+router.post("/getAllAdmin", Controller.adsAdmin);
 router.post(
   "/createAd",
   // auth.verifyUser,
