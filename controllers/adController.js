@@ -3,6 +3,7 @@ import notFound from "../errors/notFound.js";
 import { paginationAndFilter } from "../utils/reuseable.js";
 import User from "../models/user.js";
 import { convertCurrency } from "../utils/currenyConverter.js";
+import Category from "../models/Category.js";
 //fetch all ads
 const ads = async (req, res, next) => {
   try {
@@ -55,24 +56,18 @@ const ad = async (req, res, next) => {
   }
 };
 
+
 const createAd = async (req, res, next) => {
   try {
-    // const author = req.author;
-
-    // Check if the user has a subscribed plan
     const user = await User.findById(req.body.user).populate("plan");
-
+    const cat = await Category.findById(req.body.category);
     if (user) {
-      // Check if the user has reached the ads limit
-      console.log(user);
       if (user?.adsCreated >= user?.plan?.totalAds) {
-        return res
-          .status(400)
-          .json({ message: "You have reached your ads limit" });
+        return res.status(400).json({ message: "You have reached your ads limit" });
       }
-      let priority = "normal"; // Default priority
 
-      // Assign priority based on the subscribed plan
+      let priority = "normal";
+
       if (user.plan.name === "Bronze") {
         priority = "low";
       } else if (user.plan.name === "Silver") {
@@ -82,7 +77,6 @@ const createAd = async (req, res, next) => {
       }
     }
 
-    // Create the ad
     const {
       title,
       description,
@@ -94,30 +88,59 @@ const createAd = async (req, res, next) => {
       name,
       telephone,
       condition,
+      location,
       warranty,
-      bulkPrice
+      bulkPrice,
+      squareMeter,
+      propertyType,
+      furnishing,
+      parkingSpace,
+      minimumRentTime,
+      agencyFee,
+      legalAndAgreement,
+      cautionFee
     } = req.body;
 
-    const ad = await Ad.create({
+    // Modified code for creating ad based on category
+    let adData = {
       title,
       description,
       price,
-
       category,
       images,
       name,
       telephone,
-      vehicle: {
+      location
+    };
+
+    if (cat.name === "Property") {
+      adData.property = {
+        squareMeter,
+        propertyType,
+        furnishing,
+        condition,
+        parkingSpace,
+        minimumRentTime,
+        agencyFee,
+        legalAndAgreement,
+        cautionFee
+      };
+    } else if (cat.name === "Vehicle") {
+      adData.vehicle = {
         brand,
         type,
         condition,
         warranty,
         bulkPrice
-      },
-    });
+      };
+    }
+    else {
+      res.status(400).json({ msg: "error", car: cat.name })
+    }
+
+    const ad = await Ad.create(adData);
 
     if (user) {
-      // Increment the adsCreated count for the user
       user.adsCreated++;
       await user.save();
     }
@@ -127,6 +150,8 @@ const createAd = async (req, res, next) => {
     next(err);
   }
 };
+
+
 
 //update ad
 const updateAd = async (req, res, next) => {

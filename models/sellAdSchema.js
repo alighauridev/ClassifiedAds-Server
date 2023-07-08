@@ -28,6 +28,18 @@ const selladSchema = new mongoose.Schema(
       required: true,
       min: 0,
     },
+    telephone: {
+      type: Number,
+    },
+    category: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
+    },
+
+
+    images: {
+      type: [String],
+    },
 
     vehicle: {
       brand: {
@@ -46,15 +58,35 @@ const selladSchema = new mongoose.Schema(
         type: Number,
       },
     },
-    category: {
-      type: [String],
-      required: true,
-      validate: (value) => Array.isArray(value) && value.length > 0,
-    },
+    property: {
 
-
-    images: {
-      type: [String],
+      squareMeter: {
+        type: Number,
+      },
+      cautionFee: {
+        type: Number,
+      },
+      agencyFee: {
+        type: Number,
+      },
+      legalAndAgreement: {
+        type: String,
+      },
+      minimumRentTime: {
+        type: Number,
+      },
+      parkingSpace: {
+        type: String,
+      },
+      condition: {
+        type: String,
+      },
+      furnishing: {
+        type: String,
+      },
+      propertyType: {
+        type: String,
+      },
     },
 
     isDeleted: {
@@ -65,9 +97,7 @@ const selladSchema = new mongoose.Schema(
       type: String,
       enum: ["buy", "sell"],
     },
-    telephone: {
-      type: Number,
-    },
+
     status: {
       type: String,
       enum: ["pending", "accepted", "rejected"],
