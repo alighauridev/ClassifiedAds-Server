@@ -218,7 +218,7 @@ const deleteAllAds = async () => {
     console.error('An error occurred while deleting ads:', error);
   }
 };
-
+// deleteAllAds()
 // Call the function to delete all ads
 // deleteAllAds();
 export default {
